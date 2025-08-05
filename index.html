@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voice Control</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+  button { font-size: 20px; padding: 10px 20px; }
+  #status { margin-top: 20px; font-size: 18px; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>Voice Control Motor</h1>
+<button id="recordBtn">Start Recording</button>
+<div id="status">Say "Forward" or "Backward"</div>
+
+<script>
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const rec = new SpeechRecognition();
+rec.lang = 'en-US';
+rec.interimResults = false;
+
+document.getElementById('recordBtn').onclick = () => {
+  rec.start();
+  document.getElementById('status').innerText = 'Listening...';
+};
+
+rec.onresult = (event) => {
+  const command = event.results[0][0].transcript.trim();
+  document.getElementById('status').innerText = `You said: ${command}`;
+  fetch(`saveCommand.php?command=${encodeURIComponent(command)}`);
+};
+</script>
+</body>
+</html>
